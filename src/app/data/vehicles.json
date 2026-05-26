@@ -1,0 +1,12 @@
+{
+  "brands": [
+    "Audi", "BMW", "Mercedes-Benz", "Volkswagen", "Ford", "Renault", "Peugeot",
+    "Citroën", "DS Automobiles", "Opel", "Toyota", "Honda", "Hyundai", "Kia",
+    "Nissan", "Mazda", "Mitsubishi", "Subaru", "Suzuki", "Lexus", "Infiniti",
+    "Chevrolet", "Cadillac", "Buick", "GMC", "Jeep", "Dodge", "Chrysler", "Ram",
+    "Tesla", "Volvo", "Polestar", "Jaguar", "Land Rover", "Mini", "Seat", "Skoda",
+    "Cupra", "Fiat", "Alfa Romeo", "Lancia", "Maserati", "Ferrari", "Lamborghini",
+    "Bentley", "Rolls-Royce", "Aston Martin", "McLaren", "Porsche", "Smart",
+    "Dacia", "Seres", "MG", "BYD"
+  ]
+}
