@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getVariantById } from "../../lib/products";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-04-30.basil",
-});
-
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || "https://carplaygo.fr";
 
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2026-04-22.dahlia",
+  });
+
   try {
     const body = await req.json();
     const items: { variantId: string; quantity: number }[] = body.items || [];
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
           quantity: item.quantity,
         };
       })
-      .filter(Boolean) as Stripe.Checkout.SessionCreateParams.LineItem[];
+      .filter(Boolean) as { price_data: { currency: string; product_data: { name: string; description: string; images: string[] }; unit_amount: number }; quantity: number }[];
 
     if (lineItems.length === 0) {
       return NextResponse.json(
