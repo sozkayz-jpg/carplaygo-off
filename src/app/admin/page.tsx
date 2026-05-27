@@ -1,10 +1,21 @@
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
-  const productCount = await prisma.product.count();
-  const brandCount = await prisma.vehicleBrand.count();
-  const faqCount = await prisma.fAQItem.count();
-  const imageCount = await prisma.uploadedImage.count();
+  let productCount = 0;
+  let brandCount = 0;
+  let faqCount = 0;
+  let imageCount = 0;
+
+  try {
+    productCount = await prisma.product.count();
+    brandCount = await prisma.vehicleBrand.count();
+    faqCount = await prisma.fAQItem.count();
+    imageCount = await prisma.uploadedImage.count();
+  } catch {
+    // DB not available during build or env missing
+  }
 
   return (
     <div>
