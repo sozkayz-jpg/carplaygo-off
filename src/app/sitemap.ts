@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://carplaygo.fr";
 
-  let routes: { route: string; updatedAt?: Date }[] = [];
+  let routes: { route: string }[] = [];
   try {
     routes = await prisma.sEOSetting.findMany({
-      select: { route: true, updatedAt: true },
+      select: { route: true },
     });
   } catch {
     // fallback static
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (r.route === "/" || r.route === "/compatibility") continue;
     entries.push({
       url: `${base}${r.route}`,
-      lastModified: r.updatedAt || new Date(),
+      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.5,
     });
