@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  tagline       String
+  description   String
+  price         Float
+  originalPrice Float?
+  imageUrl      String
+  features      String   @default("[]")
+  stripePriceId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model UploadedImage {
+  id        String   @id @default(uuid())
+  url       String
+  filename  String
+  width     Int?
+  height    Int?
+  sizeBytes Int?
+  mimeType  String?
+  createdAt DateTime @default(now())
+}
+
+model SiteConfig {
+  id           String @id @default("singleton")
+  logoUrl      String?
+  logoWidth    Int    @default(120)
+  logoHeight   Int    @default(40)
+  faviconUrl   String?
+  ogImageUrl   String?
+  primaryColor String @default("#10B981")
+}
+
+model SEOSetting {
+  id            String  @id @default(uuid())
+  route         String  @unique
+  title         String
+  description   String
+  keywords      String?
+  ogTitle       String?
+  ogDescription String?
+  ogImageUrl    String?
+  noIndex       Boolean @default(false)
+}
+
+model FAQItem {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+  keywords String?
+  order    Int    @default(0)
+}
+
+model VehicleBrand {
+  id   String @id @default(uuid())
+  name String @unique
+}
