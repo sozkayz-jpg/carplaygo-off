@@ -1,10 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "carplaygo2026";
-const SECRET = new TextEncoder().encode(
-  process.env.ADMIN_JWT_SECRET || "carplaygo-secret-key-2026"
-);
+const ADMIN_PASSWORD = "carplaygo2026";
+const SECRET = new TextEncoder().encode("carplaygo-secret-key-2026");
 
 export async function verifyPassword(password: string) {
   const hash = process.env.ADMIN_PASSWORD_HASH;
