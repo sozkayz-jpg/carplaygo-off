@@ -1,29 +1,36 @@
-import { SignJWT, jwtVerify } from "jose";
-import bcrypt from "bcryptjs";
+import { createHmac, timingSafeEqual } from "crypto";
 
 const ADMIN_PASSWORD = "carplaygo2026";
-const SECRET = new TextEncoder().encode("carplaygo-secret-key-2026");
+const SECRET = "carplaygo-secret-key-2026";
 
 export async function verifyPassword(password: string) {
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (hash) {
-    return bcrypt.compare(password, hash);
-  }
-  return password === ADMIN_PASSWORD;
+  const input = Buffer.from(password || "");
+  const expected = Buffer.from(ADMIN_PASSWORD);
+  if (input.length !== expected.length) return false;
+  return timingSafeEqual(input, expected);
+}
+
+function sign(data: string) {
+  return createHmac("sha256", SECRET).update(data).digest("hex");
 }
 
 export async function createSession() {
-  const token = await new SignJWT({ role: "admin" })
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("8h")
-    .sign(SECRET);
-  return token;
+  const expires = Date.now() + 1000 * 60 * 60 * 8; // 8h
+  const payload = JSON.stringify({ role: "admin", exp: expires });
+  const sig = sign(payload);
+  return `${Buffer.from(payload).toString("base64url")}.${sig}`;
 }
 
 export async function verifySession(token: string) {
   try {
-    const { payload } = await jwtVerify(token, SECRET, { clockTolerance: 60 });
-    return payload.role === "admin";
+    const [b64, sig] = token.split(".");
+    if (!b64 || !sig) return false;
+    const payload = Buffer.from(b64, "base64url").toString("utf8");
+    if (sign(payload) !== sig) return false;
+    const data = JSON.parse(payload);
+    if (data.role !== "admin") return false;
+    if (Date.now() > data.exp) return false;
+    return true;
   } catch {
     return false;
   }
