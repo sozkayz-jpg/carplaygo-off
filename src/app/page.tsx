@@ -10,10 +10,45 @@ import { FAQ } from "./sections/FAQ";
 import { TrustCTA } from "./sections/TrustCTA";
 import { Footer } from "./sections/Footer";
 import { JSONLD } from "./components/JSONLD";
-import { variants } from "./lib/products";
-import { faqItems } from "./lib/faq";
+import { prisma } from "@/lib/prisma";
 
-export default function HomePage() {
+export default async function HomePage() {
+  let products = [] as {
+    id: string;
+    name: string;
+    tagline: string;
+    description: string;
+    price: number;
+    originalPrice: number | null;
+    imageUrl: string;
+    features: string[];
+    stripePriceId: string | null;
+  }[];
+  let faqItems = [] as { question: string; answer: string }[];
+  let vehicleBrands = [] as string[];
+
+  try {
+    const dbProducts = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    products = dbProducts.map((p) => ({
+      ...p,
+      features: JSON.parse(p.features || "[]"),
+    }));
+
+    const dbFaq = await prisma.fAQItem.findMany({
+      orderBy: { order: "asc" },
+    });
+    faqItems = dbFaq.map((f) => ({ question: f.question, answer: f.answer }));
+
+    const dbBrands = await prisma.vehicleBrand.findMany({
+      orderBy: { name: "asc" },
+    });
+    vehicleBrands = dbBrands.map((b) => b.name);
+  } catch {
+    // Fallback: DB not available during build
+  }
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -22,7 +57,7 @@ export default function HomePage() {
     description:
       "Dongle USB universel pour activer le CarPlay sans fil et Android Auto sans fil sur les véhicules d'usine.",
     brand: { "@type": "Brand", name: "CarplayGO" },
-    offers: variants.map((v) => ({
+    offers: products.map((v) => ({
       "@type": "Offer",
       url: `https://carplaygo.fr/#${v.id}`,
       price: v.price.toFixed(2),
@@ -77,11 +112,11 @@ export default function HomePage() {
         <Hero />
         <SocialProof />
         <Benefits />
-        <Variants />
+        <Variants products={products} />
         <HowItWorks />
-        <Vehicles />
+        <Vehicles vehicleBrands={vehicleBrands} />
         <Specs />
-        <FAQ />
+        <FAQ faqItems={faqItems} />
         <TrustCTA />
       </main>
       <Footer />

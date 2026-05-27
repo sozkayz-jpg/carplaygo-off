@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { vehicleBrands, searchBrands } from "../lib/vehicles";
 import { AnimatedSection } from "../components/AnimatedSection";
 
-export function Vehicles() {
+export function Vehicles({ vehicleBrands }: { vehicleBrands: string[] }) {
   const [query, setQuery] = useState("");
-  const filtered = query.trim() ? searchBrands(query) : vehicleBrands;
+  const filtered = query.trim()
+    ? vehicleBrands.filter((b) => {
+        const q = query.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+        return b.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(q);
+      })
+    : vehicleBrands;
 
   return (
     <section id="compatibilite" className="py-20 bg-white">

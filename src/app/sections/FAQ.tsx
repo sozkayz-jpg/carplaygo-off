@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { faqItems } from "../lib/faq";
 import { AnimatedSection } from "../components/AnimatedSection";
 
-export function FAQ() {
+type FAQItem = {
+  question: string;
+  answer: string;
+};
+
+export function FAQ({ faqItems }: { faqItems: FAQItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (

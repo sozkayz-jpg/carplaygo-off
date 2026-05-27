@@ -1,14 +1,33 @@
-import { vehicleBrands } from "../lib/vehicles";
 import { JSONLD } from "../components/JSONLD";
+import { prisma } from "@/lib/prisma";
 
-export const metadata = {
-  title: "Compatibilité CarplayGO — Liste des véhicules compatibles",
-  description:
-    "Découvrez si votre voiture est compatible avec le dongle CarplayGO. Plus de 50 marques et des centaines de modèles : Audi, BMW, Mercedes, Renault, Peugeot, Toyota...",
-  alternates: { canonical: "https://carplaygo.fr/compatibility" },
-};
+export async function generateMetadata() {
+  let seo;
+  try {
+    seo = await prisma.sEOSetting.findUnique({ where: { route: "/compatibility" } });
+  } catch {
+    // fallback
+  }
+  return {
+    title: seo?.title || "Compatibilité CarplayGO — Liste des véhicules compatibles",
+    description:
+      seo?.description ||
+      "Découvrez si votre voiture est compatible avec le dongle CarplayGO. Plus de 50 marques et des centaines de modèles : Audi, BMW, Mercedes, Renault, Peugeot, Toyota...",
+    alternates: { canonical: "https://carplaygo.fr/compatibility" },
+  };
+}
 
-export default function CompatibilityPage() {
+export default async function CompatibilityPage() {
+  let vehicleBrands: string[] = [];
+  try {
+    const dbBrands = await prisma.vehicleBrand.findMany({
+      orderBy: { name: "asc" },
+    });
+    vehicleBrands = dbBrands.map((b) => b.name);
+  } catch {
+    // fallback
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",

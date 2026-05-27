@@ -21,7 +21,8 @@
       "Bash(git remote *)",
       "Bash(git branch *)",
       "Bash(git push *)",
-      "Bash(docker --version)"
+      "Bash(docker --version)",
+      "Bash(export DATABASE_URL=\"postgresql://neondb_owner:npg_6eZhYcGC5DSU@ep-raspy-thunder-apo7jpnm-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\")"
     ]
   }
 }

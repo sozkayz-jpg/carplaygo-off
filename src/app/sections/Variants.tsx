@@ -1,16 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { variants, getVariantById } from "../lib/products";
 import { useCart } from "../hooks/useCart";
 import { Button } from "../components/ui/Button";
 import { AnimatedSection } from "../components/AnimatedSection";
 
-export function Variants() {
-  const [selected, setSelected] = useState<string>(variants[0].id);
+type Product = {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  price: number;
+  originalPrice: number | null;
+  imageUrl: string;
+  features: string[];
+  stripePriceId: string | null;
+};
+
+function getVariantById(id: string, products: Product[]) {
+  return products.find((v) => v.id === id);
+}
+
+export function Variants({ products }: { products: Product[] }) {
+  const [selected, setSelected] = useState<string>(products[0]?.id || "");
   const { addItem } = useCart();
 
-  const active = getVariantById(selected);
+  const active = getVariantById(selected, products);
 
   return (
     <section className="py-20 bg-white">
@@ -25,7 +40,7 @@ export function Variants() {
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 gap-6 mb-10">
-          {variants.map((v) => {
+          {products.map((v) => {
             const isActive = selected === v.id;
             return (
               <button
